@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 /**
@@ -46,6 +48,16 @@ class _TranslationState extends State<Translation> {
                 maxLines: 10,
               ),
             ),
+            Container(
+              child: Transform.rotate(
+                angle: pi / 2.0,
+                child: Icon(
+                  Icons.compare_arrows_outlined,
+                  size: 45.0,
+                  color: Colors.pinkAccent,
+                ),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.all(15),
               child: TextField(
@@ -58,7 +70,7 @@ class _TranslationState extends State<Translation> {
                 controller: _outputController,
                 maxLines: 10,
               ),
-            )
+            ),
           ],
         ),
       ),

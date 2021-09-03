@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:translator/translator.dart';
 
 /**
  * Translation will contain two main widgets:
@@ -15,14 +16,31 @@ class Translation extends StatefulWidget {
 }
 
 class _TranslationState extends State<Translation> {
-  final _inputController = TextEditingController();
-  final _outputController = TextEditingController();
+  final _myController = TextEditingController();
   static const String _title = 'Translation App';
+  final translator = GoogleTranslator();
+  static String inputString = "";
+  static String translatedText = "";
+  static String fromLang = "";
+  static String toLang = "";
 
   @override
   void dispose() {
-    _inputController.dispose();
+    _myController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    _myController.addListener(_translateText);
+  }
+
+  void _translateText() {
+    inputString = _myController.text;
+    print('Incoming text is: ${inputString}');
   }
 
   @override
@@ -35,6 +53,10 @@ class _TranslationState extends State<Translation> {
         padding: EdgeInsets.all(15),
         child: Column(
           children: <Widget>[
+            // Padding(
+            // padding: EdgeInsets.all(2),
+            //   child:
+            // ),
             Padding(
               padding: EdgeInsets.all(15),
               child: TextField(
@@ -44,7 +66,7 @@ class _TranslationState extends State<Translation> {
                   ),
                   hintText: "Enter text",
                 ),
-                controller: _inputController,
+                controller: _myController,
                 maxLines: 10,
               ),
             ),
@@ -53,7 +75,7 @@ class _TranslationState extends State<Translation> {
                 angle: pi / 2.0,
                 child: Icon(
                   Icons.compare_arrows_outlined,
-                  size: 45.0,
+                  size: 60.0,
                   color: Colors.pinkAccent,
                 ),
               ),
@@ -67,7 +89,7 @@ class _TranslationState extends State<Translation> {
                   ),
                   hintText: "Translation",
                 ),
-                controller: _outputController,
+                controller: _myController,
                 maxLines: 10,
               ),
             ),

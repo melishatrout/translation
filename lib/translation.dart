@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:translator/src/langs/language.dart';
 import 'package:translator/translator.dart';
 
 /**
@@ -16,7 +17,8 @@ class Translation extends StatefulWidget {
 }
 
 class _TranslationState extends State<Translation> {
-  final _myController = TextEditingController();
+  final _inputController = TextEditingController();
+  final _outputController = TextEditingController();
   static const String _title = 'Translation App';
   final translator = GoogleTranslator();
   static String inputString = "";
@@ -24,9 +26,12 @@ class _TranslationState extends State<Translation> {
   static String fromLang = "";
   static String toLang = "";
 
+  late List<LanguageList> languageList;
+
   @override
   void dispose() {
-    _myController.dispose();
+    _inputController.dispose();
+    _outputController.dispose();
     super.dispose();
   }
 
@@ -35,12 +40,28 @@ class _TranslationState extends State<Translation> {
     super.initState();
 
     // Start listening to changes.
-    _myController.addListener(_translateText);
+    _inputController.addListener(_translateText);
   }
 
   void _translateText() {
-    inputString = _myController.text;
-    print('Incoming text is: ${inputString}');
+    inputString = _inputController.text;
+    var outputstring = new StringBuffer();
+    if (inputString.length > 0) {
+      print('Incoming text is: ${inputString}');
+      var outputstring = new StringBuffer();
+
+      var future = (async*) translator.translate(inputString, to: 'fr').asStream().forEach((t) {
+        // var tans = t.text;
+        // if (tans.length > 0) {
+        //   outputstring.write(t.text);
+        // }
+        // if (tans.length == 0) outputstring.clear();
+        yield t.text;
+      });
+
+      _outputController.text = future.toString();
+    }
+    // print(translatedText);
   }
 
   @override
@@ -66,7 +87,7 @@ class _TranslationState extends State<Translation> {
                   ),
                   hintText: "Enter text",
                 ),
-                controller: _myController,
+                controller: _inputController,
                 maxLines: 10,
               ),
             ),
@@ -89,8 +110,9 @@ class _TranslationState extends State<Translation> {
                   ),
                   hintText: "Translation",
                 ),
-                controller: _myController,
+                controller: _outputController,
                 maxLines: 10,
+                readOnly: true,
               ),
             ),
           ],

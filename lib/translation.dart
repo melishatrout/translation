@@ -22,7 +22,6 @@ class _TranslationState extends State<Translation> {
   static const String _title = 'Translation App';
   final translator = GoogleTranslator();
   static String inputString = "";
-  static String translatedText = "";
   static String fromLang = "";
   static String toLang = "";
 
@@ -38,30 +37,19 @@ class _TranslationState extends State<Translation> {
   @override
   void initState() {
     super.initState();
-
     // Start listening to changes.
-    _inputController.addListener(_translateText);
+    _outputController.addListener(_translateText);
   }
 
   void _translateText() {
     inputString = _inputController.text;
-    var outputstring = new StringBuffer();
     if (inputString.length > 0) {
       print('Incoming text is: ${inputString}');
-      var outputstring = new StringBuffer();
-
-      var future = (async*) translator.translate(inputString, to: 'fr').asStream().forEach((t) {
-        // var tans = t.text;
-        // if (tans.length > 0) {
-        //   outputstring.write(t.text);
-        // }
-        // if (tans.length == 0) outputstring.clear();
-        yield t.text;
+      translator.translate(inputString, to: 'fr').asStream().forEach((element) {
+        _outputController.text = element.text;
       });
-
-      _outputController.text = future.toString();
     }
-    // print(translatedText);
+    print('Output string is ${_outputController.text}\n\n');
   }
 
   @override
